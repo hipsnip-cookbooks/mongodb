@@ -1,0 +1,5 @@
+cookbook 'logentries-rsyslog', :path => '/Users/adamb/Sites/hipsnip-mongodb'
+cookbook 'apt', :locked_version => '1.9.2'
+cookbook 'minitest-handler', :locked_version => '0.1.7'
+cookbook 'rsyslog', :locked_version => '1.5.0'
+cookbook 'chef_handler', :locked_version => '1.1.4'

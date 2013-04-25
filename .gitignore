@@ -1,0 +1,9 @@
+.bundle
+.chef/checksums
+.vagrant
+.kitchen
+bin
+cookbook_test
+metadata.json
+vendor.kitchen/
+*.tar.gz
