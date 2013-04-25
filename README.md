@@ -1,4 +1,4 @@
-Description [![Build Status](https://travis-ci.org/hipsnip-cookbooks/hipsnip-mongodb.png)](https://travis-ci.org/hipsnip-cookbooks/hipsnip-mongodb)
+Description [![Build Status](https://travis-ci.org/hipsnip-cookbooks/mongodb.png)](https://travis-ci.org/hipsnip-cookbooks/mongodb)
 ===========
 
 
