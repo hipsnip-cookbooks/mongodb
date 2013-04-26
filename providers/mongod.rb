@@ -19,7 +19,7 @@
 
 action :create do
   instance_name = if new_resource.name == "default" then "mongod"
-                  else "mongod-#{new_resource.instance_name}"
+                  else "mongod-#{new_resource.name}"
                   end
 
   Chef::Log.info "Configuring MongoDB instance '#{instance_name}'..."
