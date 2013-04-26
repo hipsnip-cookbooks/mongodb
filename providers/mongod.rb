@@ -29,6 +29,7 @@ action :create do
   template config_file do
     source "mongod.conf.erb"
     mode '644'
+    cookbook 'hipsnip-mongodb'
     variables({
       'instance_name' => instance_name,
       'bind_ip' => new_resource.bind_ip,
@@ -64,6 +65,7 @@ action :create do
   template "/etc/init/#{instance_name}.conf" do
     source "mongod.upstart.erb"
     mode '644'
+    cookbook 'hipsnip-mongodb'
     variables(
       "config_file" => config_file,
       "instance_name" => instance_name
