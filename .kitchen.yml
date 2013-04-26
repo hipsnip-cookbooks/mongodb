@@ -12,10 +12,9 @@ platforms:
   run_list:
   - recipe[apt]
 suites:
-- name: single-instance
+- name: mongod-recipe
   run_list:
-    - recipe[hipsnip-mongodb::default]
-    - recipe[hipsnip-mongodb::mongod]
-  attributes:
-    mongodb:
-      small_files: true
+    - recipe[hipsnip-mongodb_test::mongod_recipe]
+- name: mongod-lwrp
+  run_list:
+    - recipe[hipsnip-mongodb_test::mongod_lwrp]
