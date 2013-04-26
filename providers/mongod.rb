@@ -80,7 +80,9 @@ action :create do
     action [:enable, :start]
   end
 
-  hipsnip_mongodb_check_node "127.0.0.1"
+  hipsnip_mongodb_check_node "127.0.0.1" do
+    port new_resource.port
+  end
 
   new_resource.updated_by_last_action(true)
 end
