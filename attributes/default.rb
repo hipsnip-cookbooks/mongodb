@@ -88,7 +88,7 @@ default['mongodb']['gem_version']['bson_ext'] = '1.8.5'
 # Settings for node health check provider
 
 default['mongodb']['node_check']['retries'] = 3
-default['mongodb']['node_check']['timeout'] = 3 # seconds
+default['mongodb']['node_check']['timeout'] = 10 # seconds
 # @note - timeout is exponential - the actual timeout is retry*timeout
 
 
