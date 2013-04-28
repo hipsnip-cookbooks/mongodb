@@ -17,4 +17,6 @@
 # limitations under the License.
 #
 
+include_recipe "hipsnip-mongodb::default"
+
 hipsnip_mongodb_mongod "default"
