@@ -20,19 +20,12 @@
 ################################################################################
 # Download and install
 
-# Just to make it easier to switch between releases
-# Don't have to fill these in if you don't want to
-version_signatures = {
-  'x86_64' => {
-    '2.2.4' => '67f28cfe3dadaa863e59c6a0c79e20c029ca91a7971f9ac21fed39e03ac85c57',
-    '2.4.3' => '06f2359c9ec1841c5282d83144daf9b5edbb429cf2db662e7f54d61ecc818315'
-  }
-}
-
-default['mongodb']['version'] = '2.4.3'
-default['mongodb']['download_host'] = 'fastdl.mongodb.org'
-default['mongodb']['checksum'] = version_signatures[node['kernel']['machine']][node['mongodb']['version']] # SHA-256
-default['mongodb']['download_dir'] = '/usr/local/src'
+default['mongodb']['download']['version'] = '2.4.3'
+default['mongodb']['download']['checksum'] = '06f2359c9ec1841c5282d83144daf9b5edbb429cf2db662e7f54d61ecc818315' # SHA-256
+# don't change this, unless you're running your own download server
+default['mongodb']['download']['host'] = 'fastdl.mongodb.org'
+default['mongodb']['download']['subfolder'] = 'linux/'
+default['mongodb']['download']['cache_dir'] = '/usr/local/src'
 
 
 ################################################################################

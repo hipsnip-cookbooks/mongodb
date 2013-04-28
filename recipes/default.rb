@@ -26,9 +26,9 @@ end
 require 'mongo'
 require 'fileutils'
 
-node.set['mongodb']['download_src'] = "http://#{node['mongodb']['download_host']}/linux/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['version']}.tgz"
-node.set['mongodb']['download_dest'] = "#{node['mongodb']['download_dir']}/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['version']}.tgz"
-node.set['mongodb']['extracted'] = "#{node['mongodb']['download_dir']}/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['version']}"
+node.set['mongodb']['download']['src'] = "http://#{node['mongodb']['download']['host']}/#{node['mongodb']['download']['subfolder']}mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['download']['version']}.tgz"
+node.set['mongodb']['downloaded'] = "#{node['mongodb']['download']['cache_dir']}/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['download']['version']}.tgz"
+node.set['mongodb']['extracted'] = "#{node['mongodb']['download']['cache_dir']}/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['download']['version']}"
 
 
 ################################################################################
@@ -55,15 +55,15 @@ end
 ################################################################################
 # Download MongoDB release - NOTE: This won't configure and start an instance
 
-remote_file node['mongodb']['download_dest'] do
-  source   node['mongodb']['download_src']
-  checksum node['mongodb']['checksum']
+remote_file node['mongodb']['downloaded'] do
+  source   node['mongodb']['download']['src']
+  checksum node['mongodb']['download']['checksum']
   mode     0644
 end
 
 ruby_block 'Extract MongoDB archive' do
   block do
-    `tar xzf #{node['mongodb']['download_dest']} -C #{node['mongodb']['download_dir']}`
+    `tar xzf #{node['mongodb']['downloaded']} -C #{node['mongodb']['download']['cache_dir']}`
     raise "Failed to extract MongoDB archive" unless ::File.exists?(node['mongodb']['extracted'])
   end
 
