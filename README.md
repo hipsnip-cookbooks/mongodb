@@ -11,8 +11,11 @@ point it at your own custom build of MongoDB (say with SSL included).
 
 Compatibility
 =============
-Integration tested on Ubuntu `12.04` with Chef `11.4`, but assumed to work with other Debian-based
+Integration tested on 64bit Ubuntu `12.04` with Chef `11.4`, but assumed to work with other Debian-based
 distros as well.
+
+> NOTE: Running MongoDB on 32bit nodes is generally a bad idea, so we'll raise an exception
+if someone tries to do it here.
 
 
 Usage
