@@ -19,4 +19,7 @@
 
 include_recipe "hipsnip-mongodb::default"
 
-hipsnip_mongodb_mongod "default"
+hipsnip_mongodb_mongod "default" do
+  port node['mongodb']['mongod']['port']
+  bind_ip node['mongodb']['mongod']['bind_ip'] unless node['mongodb']['mongod']['bind_ip'].empty?
+end
