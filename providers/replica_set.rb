@@ -98,6 +98,27 @@ action :create do
       Chef::Log.warn "Replica set already initialized"
     end
 
+    # Check replica set health
+    retries = 0
+    begin
+      connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :read => :primary_preferred)
+      connection['admin'].command({'replSetGetStatus' => 1})
+    rescue Mongo::ConnectionFailure
+      raise if retries >= node['mongodb']['node_check']['retries']
+      Chef::Log.warn "Failed to get replica set status - might be initializing still"
+
+      begin
+        connection.close
+      rescue
+      end
+
+      retries += 1
+      sleep_time = retries * node['mongodb']['node_check']['timeout']
+      Chef::Log.info "Waiting #{sleep_time} seconds and retrying..."
+      sleep(sleep_time)
+      retry
+    end
+
     new_resource.updated_by_last_action(true)
   end
 
