@@ -19,14 +19,3 @@
 
 default['mongodb']['mongod']['port'] = 27017
 default['mongodb']['mongod']['bind_ip'] = '' # Leave blank to bind to all local and public IPs - in any case, make sure you list "127.0.0.1"!
-
-# Replica set node settings
-# default['mongodb']['mongod']['replica_set'] = ''
-
-# default['mongodb']['mongod']['arbiter_only'] = false
-# default['mongodb']['mongod']['build_indexes'] = true
-# default['mongodb']['mongod']['hidden'] = false
-# default['mongodb']['mongod']['priority'] = 1.0
-# default['mongodb']['mongod']['tags'] = {}
-# default['mongodb']['mongod']['slave_delay'] = 0
-# default['mongodb']['mongod']['votes'] = 1
