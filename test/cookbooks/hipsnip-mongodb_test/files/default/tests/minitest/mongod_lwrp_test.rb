@@ -5,9 +5,17 @@ describe_recipe "hipsnip-mongodb_test::mongod_lwrp_test" do
   include Helpers::CookbookTest
 
   it "should set up and start a mongod instance" do
-    connection = Mongo::MongoClient.new("127.0.0.1", 27018)
-    connection['test'].command({'serverStatus' => 1})['ok'].must_equal 1
-    connection.close
+    retries = 0
+    begin
+      connection = Mongo::MongoClient.new("127.0.0.1", 27018)
+      connection['test'].command({'serverStatus' => 1})['ok'].must_equal 1
+      connection.close
+    rescue Mongo::ConnectionFailure
+      raise if retries >= 3
+      retries += 1
+      sleep(10)
+      retry
+    end
   end
 
   it "should set up configuration file" do

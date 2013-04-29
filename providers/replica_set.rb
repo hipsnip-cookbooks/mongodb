@@ -92,7 +92,7 @@ action :create do
 
     begin
       connection['admin'].command({'replSetInitiate' => replica_set_config})
-      Chef::Log.info "Replica set #{replica_set_name} initialized!"
+      Chef::Log.info "Replica set '#{replica_set_name}' initialized!"
     rescue Mongo::OperationFailure => ex
       raise ex unless ex.message.include? 'already initialized'
       Chef::Log.warn "Replica set already initialized"
@@ -120,9 +120,28 @@ action :create do
 
 
     Chef::Log.info "Getting current replica set config"
+    retries = 0
 
-    current_config = connection['local']['system']['replset'].find_one({"_id" => replica_set_name})
-    current_members = current_config['members']
+    begin
+      current_config = connection['local']['system']['replset'].find_one({"_id" => replica_set_name})
+      current_members = current_config['members']
+    rescue Mongo::ConnectionFailure
+      raise if retries >= node['mongodb']['node_check']['retries']
+      Chef::Log.warn "Failed to get replica set configuration"
+
+      begin
+        connection.close
+      rescue
+      end
+
+      retries += 1
+      sleep_time = retries * node['mongodb']['node_check']['timeout']
+      Chef::Log.info "Waiting #{sleep_time} seconds and retrying..."
+      sleep(sleep_time)
+
+      connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+      retry
+    end
 
 
     Chef::Log.info "Generating new replica set config"
@@ -147,7 +166,27 @@ action :create do
       end
 
       Chef::Log.info "Verifying new replica set configuration..."
-      updated_config = connection['local']['system']['replset'].find_one({"_id" => replica_set_name})
+      retries = 0
+
+      begin
+        updated_config = connection['local']['system']['replset'].find_one({"_id" => replica_set_name})
+      rescue Mongo::ConnectionFailure
+        raise if retries >= node['mongodb']['node_check']['retries']
+        Chef::Log.warn "Failed to get replica set configuration"
+
+        begin
+          connection.close
+        rescue
+        end
+
+        retries += 1
+        sleep_time = retries * node['mongodb']['node_check']['timeout']
+        Chef::Log.info "Waiting #{sleep_time} seconds and retrying..."
+        sleep(sleep_time)
+
+        connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+        retry
+      end
 
       if updated_config['version'] == new_config['version'] && updated_config['members'] == new_config['members']
         Chef::Log.info "Replica set configuration updated and verified!"
