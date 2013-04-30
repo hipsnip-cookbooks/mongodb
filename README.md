@@ -82,6 +82,7 @@ which are deployed on that node.
 
     default['mongodb']['oplog'] # Oplog size in MB (defaults to 100)
     default['mongodb']['small_files'] # Set to true to reduce the amount preallocated (defaults to False)
+    default['mongodb']['open_file_limit'] # The ulimit for open file descriptors set on the mongodb user (defaults to 64000)
 
 
 ### Gem settings

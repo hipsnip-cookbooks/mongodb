@@ -68,6 +68,7 @@ default['mongodb']['oplog'] = 100 # MB
 
 # misc
 default['mongodb']['small_files'] = false
+default['mongodb']['open_file_limit'] = 64000 # 10gen recommendation
 
 
 ####################################################

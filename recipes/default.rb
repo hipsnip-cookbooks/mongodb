@@ -19,6 +19,8 @@
 
 raise "Running MongoDB on a 32bit box is a bad idea, so we won't let you do it - sorry!" if node['kernel']['machine'] == "i686"
 
+include_recipe 'ulimit::default'
+
 chef_gem 'mongo' do
   version node['mongodb']['gem_version']['mongo']
 end
@@ -49,6 +51,11 @@ directory '/etc/mongodb' do
   mode  '755'
   owner 'root'
   group 'root'
+end
+
+# Bump up ulimit
+user_ulimit node['mongodb']['user'] do
+  filehandle_limit node['mongodb']['open_file_limit']
 end
 
 
