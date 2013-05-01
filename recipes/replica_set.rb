@@ -54,7 +54,14 @@ end
 ############################
 # Member_id for this node
 
-unless node['mongodb']['mongod']['member_id']
+if node['mongodb']['mongod']['member_id']
+  # Replace the stored details for this member node
+  # Works around incomplete nodes being returned by search in Chef 11
+  unless replica_set_members.select{|m| m['id'] == node['mongodb']['mongod']['member_id']}.empty?
+    replica_set_members.reject!{|m| m['id'] == node['mongodb']['mongod']['member_id']}
+    replica_set_members << member_from_node(node)
+  end
+else
   Chef::Log.info "This node doesn't seem to have a member_id - setting one now"
 
   member_id = if replica_set_members.empty? then 0
