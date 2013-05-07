@@ -232,9 +232,9 @@ def generate_member_config(node)
   member_config['host'] = node['host']
 
   # Only add extra properties if they were changed from their defaults
-  member_config['arbiterOnly'] = node['arbiter_only'] unless node['arbiter_only'].nil? || node['arbiter_only'] == false
   member_config['buildIndexes'] = node['build_indexes'] unless node['build_indexes'].nil? || node['build_indexes'] == true
   member_config['priority'] = node['priority'] unless node['priority'].nil? || node['priority'] == 1.0
+  member_config['arbiterOnly'] = node['arbiter_only'] unless node['arbiter_only'].nil? || node['arbiter_only'] == false
   member_config['slaveDelay'] = node['slave_delay'] unless node['slave_delay'].nil? || node['slave_delay'] == 0
   member_config['hidden'] = node['hidden'] unless node['hidden'].nil? || node['hidden'] == false
   member_config['votes'] = node['votes'] unless node['votes'].nil? || node['votes'] == 1
