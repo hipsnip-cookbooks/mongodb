@@ -242,7 +242,7 @@ refer to the MongoDB documentation for details.
 To set up a replica set with a couple of nodes:
 
     hipsnip_mongodb_replica_set "my_set" do
-        nodes [
+        members [
             {
                 'id' => 0,
                 'host' => '127.0.0.1:27017'
