@@ -10,6 +10,9 @@ stop on runlevel [016]
 # If the process quits unexpectedly trigger a respawn
 respawn
 
+# Increase ulimit to recommended levels
+limit nofile <%= node['mongodb']['open_file_limit'] %> <%= node['mongodb']['open_file_limit'] %>
+
 # Start the process
 exec start-stop-daemon --start --chuid <%= node['mongodb']['user'] %> --make-pidfile --pidfile /var/run/<%= @instance_name %>.pid --exec /usr/bin/mongod -- -f <%= @config_file %>
 
