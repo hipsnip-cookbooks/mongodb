@@ -32,10 +32,9 @@ node.set['mongodb']['extracted'] = "#{node['mongodb']['download']['cache_dir']}/
 
 
 # Update TCP keepalive time
-if node['mongodb']['set_tcp_keepalive_time']
-  sysctl_param "net.ipv4.tcp_keepalive_time" do
-    value node['mongodb']['tcp_keepalive_time']
-  end
+sysctl_param "net.ipv4.tcp_keepalive_time" do
+  value node['mongodb']['tcp_keepalive_time']
+  only_if { node['mongodb']['set_tcp_keepalive_time'] }
 end
 
 
