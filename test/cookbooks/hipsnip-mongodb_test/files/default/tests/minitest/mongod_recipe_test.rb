@@ -26,4 +26,8 @@ describe_recipe "hipsnip-mongodb_test::mongod_recipe" do
   it "should create init file for service" do
     file("/etc/init/mongod.conf").must_exist
   end
+
+  it "should set the TCP keepalive time to 300" do
+    assert_sh("sysctl net.ipv4.tcp_keepalive_time").must_include "net.ipv4.tcp_keepalive_time = 300"
+  end
 end

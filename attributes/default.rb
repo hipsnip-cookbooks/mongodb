@@ -70,6 +70,9 @@ default['mongodb']['oplog'] = 100 # MB
 default['mongodb']['small_files'] = false
 default['mongodb']['open_file_limit'] = 64000 # 10gen recommendation
 
+default['mongodb']['set_tcp_keepalive_time'] = false
+default['mongodb']['tcp_keepalive_time'] = 300 # 10gen recommendation
+
 
 ####################################################
 # Gems

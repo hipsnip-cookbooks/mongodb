@@ -83,6 +83,8 @@ which are deployed on that node.
     default['mongodb']['oplog'] # Oplog size in MB (defaults to 100)
     default['mongodb']['small_files'] # Set to true to reduce the amount preallocated (defaults to False)
     default['mongodb']['open_file_limit'] # The ulimit for open file descriptors set on the mongodb user (defaults to 64000)
+    default['mongodb']['set_tcp_keepalive_time'] # Whether to update the TCP keepalive time on the system (defaults to False)
+    default['mongodb']['tcp_keepalive_time'] # The new value for the TCP keepalive time (defaults to 300)
 
 
 ### Gem settings

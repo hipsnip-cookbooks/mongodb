@@ -31,6 +31,14 @@ node.set['mongodb']['downloaded'] = "#{node['mongodb']['download']['cache_dir']}
 node.set['mongodb']['extracted'] = "#{node['mongodb']['download']['cache_dir']}/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['download']['version']}"
 
 
+# Update TCP keepalive time
+if node['mongodb']['set_tcp_keepalive_time']
+  sysctl_param "net.ipv4.tcp_keepalive_time" do
+    value node['mongodb']['tcp_keepalive_time']
+  end
+end
+
+
 ################################################################################
 # Set up Mongo user, group and folders
 

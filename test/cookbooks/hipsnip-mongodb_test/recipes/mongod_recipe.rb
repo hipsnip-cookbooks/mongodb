@@ -20,6 +20,7 @@
 # Set up a single mongod instance using the mongod recipe
 
 node.set['mongodb']['small_files'] = true
+node.set['mongodb']['set_tcp_keepalive_time'] = true
 
 include_recipe "hipsnip-mongodb_test::default"
 include_recipe "hipsnip-mongodb::mongod"
