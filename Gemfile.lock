@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/hipsnip-cookbooks/cookbook-development.git
-  revision: 7ed965a7f0f1b534c37115bcffbe0720844b3c26
+  revision: af1702296945ac183d3434283484bcf135309650
   specs:
     cookbook-development (0.1.1)
       chef (~> 11.4.4)
