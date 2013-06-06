@@ -51,12 +51,12 @@ action :create do
   replica_set_initiated = false
 
   if members.length == 1
-    connection = Mongo::MongoClient.new(*members[0]['host'].split(':'), :read => :primary_preferred)
+    connection = ::Mongo::MongoClient.new(*members[0]['host'].split(':'), :read => :primary_preferred)
 
     begin
       connection['admin'].command({'replSetGetStatus' => 1})
       replica_set_initiated = true
-    rescue Mongo::OperationFailure => ex
+    rescue ::Mongo::OperationFailure => ex
       # unless it's telling us to initiate the replica set
       unless ex.message.include? 'run rs.initiate'
         raise # re-raise the error - we want to know about it
@@ -64,10 +64,10 @@ action :create do
     end
   else
     begin
-      connection = Mongo::MongoReplicaSetClient.new(seed_list, :read => :primary_preferred, :connect_timeout => 10)
+      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :read => :primary_preferred, :connect_timeout => 10)
       connection['admin'].command({'replSetGetStatus' => 1})
       replica_set_initiated = true
-    rescue Mongo::ConnectionFailure => ex
+    rescue ::Mongo::ConnectionFailure => ex
       # unless it's telling us that these members don't form a replica set
       unless ex.message.include? 'Cannot connect to a replica set using seeds'
         raise # re-raise the error - we want to know about it
@@ -75,7 +75,7 @@ action :create do
 
       # Replace connection with a single-member one
       # We'll use this in the next section to initiate the replica set
-      connection = Mongo::MongoClient.new(*members[0]['host'].split(':'))
+      connection = ::Mongo::MongoClient.new(*members[0]['host'].split(':'))
     end
   end
 
@@ -86,14 +86,14 @@ action :create do
   unless replica_set_initiated
     Chef::Log.info "Initializing replica set..."
 
-    replica_set_config = BSON::OrderedHash.new
+    replica_set_config = ::BSON::OrderedHash.new
     replica_set_config['_id'] = replica_set_name
     replica_set_config['members'] = members.collect{|member| generate_member_config(member)}.sort_by!{|n| n['_id']}
 
     begin
       connection['admin'].command({'replSetInitiate' => replica_set_config})
       Chef::Log.info "Replica set '#{replica_set_name}' initialized!"
-    rescue Mongo::OperationFailure => ex
+    rescue ::Mongo::OperationFailure => ex
       raise ex unless ex.message.include? 'already initialized'
       Chef::Log.warn "Replica set already initialized"
     end
@@ -101,9 +101,9 @@ action :create do
     # Check replica set health
     retries = 0
     begin
-      connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :read => :primary_preferred)
+      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :read => :primary_preferred)
       connection['admin'].command({'replSetGetStatus' => 1})
-    rescue Mongo::ConnectionFailure
+    rescue ::Mongo::ConnectionFailure
       raise if retries >= node['mongodb']['node_check']['retries']
       Chef::Log.warn "Failed to get replica set status - might be initializing still"
 
@@ -130,13 +130,13 @@ action :create do
     Chef::Log.info "Connecting to existing replica set"
 
     # Make sure we have a replica set connection for this
-    unless connection.is_a?(Mongo::MongoReplicaSetClient)
+    unless connection.is_a?(::Mongo::MongoReplicaSetClient)
       begin
         connection.close
       rescue
       end
 
-      connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
     end
 
 
@@ -146,7 +146,7 @@ action :create do
     begin
       current_config = connection['local']['system']['replset'].find_one({"_id" => replica_set_name})
       current_members = current_config['members']
-    rescue Mongo::ConnectionFailure
+    rescue ::Mongo::ConnectionFailure
       raise if retries >= node['mongodb']['node_check']['retries']
       Chef::Log.warn "Failed to get replica set configuration"
 
@@ -160,14 +160,14 @@ action :create do
       Chef::Log.info "Waiting #{sleep_time} seconds and retrying..."
       sleep(sleep_time)
 
-      connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
       retry
     end
 
 
     Chef::Log.info "Generating new replica set config"
 
-    new_config = BSON::OrderedHash.new
+    new_config = ::BSON::OrderedHash.new
     new_config['_id'] = replica_set_name
     new_config['version'] = current_config['version'] + 1
     new_config['members'] = members.collect{|member| generate_member_config(member)}.sort_by!{|n| n['_id']}
@@ -181,9 +181,9 @@ action :create do
 
       begin
         connection['admin'].command({'replSetReconfig' => new_config})
-      rescue Mongo::ConnectionFailure => ex # Reconfiguring closes all connections - this is normal
+      rescue ::Mongo::ConnectionFailure => ex # Reconfiguring closes all connections - this is normal
         Chef::Log.info "Connection closed, reconnecting..."
-        connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+        connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
       end
 
       Chef::Log.info "Verifying new replica set configuration..."
@@ -191,7 +191,7 @@ action :create do
 
       begin
         updated_config = connection['local']['system']['replset'].find_one({"_id" => replica_set_name})
-      rescue Mongo::ConnectionFailure
+      rescue ::Mongo::ConnectionFailure
         raise if retries >= node['mongodb']['node_check']['retries']
         Chef::Log.warn "Failed to get replica set configuration"
 
@@ -205,7 +205,7 @@ action :create do
         Chef::Log.info "Waiting #{sleep_time} seconds and retrying..."
         sleep(sleep_time)
 
-        connection = Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+        connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
         retry
       end
 

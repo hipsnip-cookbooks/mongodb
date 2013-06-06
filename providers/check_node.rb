@@ -26,11 +26,11 @@ action :run do
     retries = 0
 
     begin
-      connection = Mongo::MongoClient.new(node_ip, port, :slave_ok => true)
+      connection = ::Mongo::MongoClient.new(node_ip, port, :slave_ok => true)
       res = connection['test'].command({'serverStatus' => 1}) # The DB name doesn't actually matter
       raise "serverStatus command failed on #{node_ip}:#{port}" if res.empty? or res['ok'] != 1
       connection.close
-    rescue Mongo::ConnectionFailure
+    rescue ::Mongo::ConnectionFailure
       Chef::Log.warn "Failed to connect to MongoDB node at #{node_ip}:#{port}"
 
       if retries < node['mongodb']['node_check']['retries']
