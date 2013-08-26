@@ -1,3 +1,22 @@
-cookbook 'apt', :locked_version => '1.9.2'
-cookbook 'minitest-handler', :locked_version => '0.1.7'
-cookbook 'chef_handler', :locked_version => '1.1.4'
+{
+  "sources": {
+    "hipsnip-mongodb": {
+      "path": "."
+    },
+    "apt": {
+      "locked_version": "2.1.0"
+    },
+    "minitest-handler": {
+      "locked_version": "0.2.1"
+    },
+    "hipsnip-mongodb_test": {
+      "path": "./test/cookbooks/hipsnip-mongodb_test"
+    },
+    "sysctl": {
+      "locked_version": "0.3.3"
+    },
+    "chef_handler": {
+      "locked_version": "1.1.4"
+    }
+  }
+}
