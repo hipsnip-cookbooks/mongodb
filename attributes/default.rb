@@ -20,8 +20,8 @@
 ################################################################################
 # Download and install
 
-default['mongodb']['download']['version'] = '2.4.3'
-default['mongodb']['download']['checksum'] = '06f2359c9ec1841c5282d83144daf9b5edbb429cf2db662e7f54d61ecc818315' # SHA-256
+default['mongodb']['download']['version'] = '2.4.6'
+default['mongodb']['download']['checksum'] = '65bf44b1eaaf35052f53e1700bfe890b0951f65600716f0c12fd4db05421383c' # SHA-256
 # don't change this, unless you're running your own download server
 default['mongodb']['download']['host'] = 'fastdl.mongodb.org'
 default['mongodb']['download']['subfolder'] = 'linux/'
@@ -77,8 +77,8 @@ default['mongodb']['tcp_keepalive_time'] = 300 # 10gen recommendation
 ####################################################
 # Gems
 
-default['mongodb']['gem_version']['mongo'] = '1.8.5'
-default['mongodb']['gem_version']['bson_ext'] = '1.8.5'
+default['mongodb']['gem_version']['mongo'] = '1.9.2'
+default['mongodb']['gem_version']['bson_ext'] = '1.9.2'
 
 
 ####################################################
