@@ -2,7 +2,7 @@
 .chef/checksums
 .vagrant
 Vagrantfile
-hipsnip-mongodb/
+hipsnip-mongodb
 sysctl/
 .kitchen
 bin
