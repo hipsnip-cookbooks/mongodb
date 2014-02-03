@@ -57,6 +57,9 @@ which are deployed on that node.
     default['mongodb']['group'] # The group to run MongoDB under (defaults to 'mongodb')
     default['mongodb']['group_id'] # Group ID for mongo group (defaults to 3500)
 
+    default['mongodb']['admin'] # The admin username to run MongoDB under (defaults to 'admin')
+    default['mongodb']['password'] # Password of the admin user (defaults to 'password')
+
     default['mongodb']['log_dir'] # Log folder (defaults to '/var/log/mongo')
     default['mongodb']['data_dir'] # Data directory (defaults to '/var/lib/mongo_data')
     default['mongodb']['journal_dir'] # Journal directory (defaults to '/var/lib/mongo_journal')

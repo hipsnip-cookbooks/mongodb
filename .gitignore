@@ -1,6 +1,9 @@
 .bundle
 .chef/checksums
 .vagrant
+Vagrantfile
+hipsnip-mongodb/
+sysctl/
 .kitchen
 bin
 cookbook_test
