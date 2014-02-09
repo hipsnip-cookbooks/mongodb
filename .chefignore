@@ -1,0 +1,14 @@
+.git
+.gitignore
+.rvmrc
+.ruby-version
+.travis.yml
+.kitchen.yml
+Gemfile
+Gemfile.lock
+Berksfile
+Berksfile.lock
+Strainerfile
+spec
+test
+Rakefile
