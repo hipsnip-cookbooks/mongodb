@@ -6,17 +6,14 @@
     "apt": {
       "locked_version": "2.1.0"
     },
-    "minitest-handler": {
-      "locked_version": "0.2.1"
-    },
     "hipsnip-mongodb_test": {
       "path": "./test/cookbooks/hipsnip-mongodb_test"
     },
+    "ark": {
+      "locked_version": "0.4.2"
+    },
     "sysctl": {
       "locked_version": "0.3.3"
-    },
-    "chef_handler": {
-      "locked_version": "1.1.4"
     }
   }
 }
