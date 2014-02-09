@@ -4,7 +4,7 @@ require 'serverspec'
 include Serverspec::Helper::Exec
 include Serverspec::Helper::DetectOS
 
-describe file("/etc/mongodb/mongod.conf") do
+describe file("/etc/mongodb/mongod-primary.conf") do
   it { should be_file }
   it { should contain "port = 27018" }
   it { should contain "dbpath = /var/lib/mongo_data/mongod-primary" }
