@@ -27,9 +27,6 @@ require 'mongo'
 require 'fileutils'
 
 node.set['mongodb']['download']['src'] = "http://#{node['mongodb']['download']['host']}/#{node['mongodb']['download']['subfolder']}mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['download']['version']}.tgz"
-node.set['mongodb']['downloaded'] = "#{node['mongodb']['download']['cache_dir']}/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['download']['version']}.tgz"
-node.set['mongodb']['extracted'] = "#{node['mongodb']['download']['cache_dir']}/mongodb-linux-#{node['kernel']['machine']}-#{node['mongodb']['download']['version']}"
-
 
 # Update TCP keepalive time
 sysctl_param "net.ipv4.tcp_keepalive_time" do
@@ -62,52 +59,27 @@ end
 ################################################################################
 # Download MongoDB release - NOTE: This won't configure and start an instance
 
-remote_file node['mongodb']['downloaded'] do
-  source   node['mongodb']['download']['src']
+mongo_binaries = [
+  'bsondump',
+  'mongo',
+  'mongod',
+  'mongodump',
+  'mongoexport',
+  'mongofiles',
+  'mongoimport',
+  'mongooplog',
+  'mongoperf',
+  'mongorestore',
+  'mongos',
+  'mongosniff',
+  'mongostat',
+  'mongotop'
+]
+
+ark "mongodb" do
+  url node['mongodb']['download']['src']
+  version node['mongodb']['download']['version']
   checksum node['mongodb']['download']['checksum']
-  mode     0644
-end
-
-ruby_block 'Extract MongoDB archive' do
-  block do
-    `tar xzf #{node['mongodb']['downloaded']} -C #{node['mongodb']['download']['cache_dir']}`
-    raise "Failed to extract MongoDB archive" unless ::File.exists?(node['mongodb']['extracted'])
-  end
-
-  action :create
-
-  not_if do
-    ::File.exists?(node['mongodb']['extracted'])
-  end
-end
-
-
-ruby_block "Copy MongoDB executables" do
-  block do
-    Dir[::File::join(node['mongodb']['extracted'], 'bin', '*')].each do |exe|
-        exe_name = ::File.basename(exe)
-        exe_dest = ::File.join('/usr/bin', exe_name)
-
-        Chef::Log.info "Looking at MongoDB executable '#{exe_name}':"
-
-        downloaded_signature = `sha256sum #{exe} | cut -d ' ' -f 1`.strip
-        Chef::Log.info "sha256 sum of downloaded file: #{downloaded_signature}"
-
-        installed_signature = (::File.exists?(exe_dest) ? `sha256sum #{exe_dest} | cut -d ' ' -f 1` : '').strip
-        Chef::Log.info "sha256 sum of current file: #{installed_signature}"
-
-        if downloaded_signature != installed_signature
-          Chef::Log.info "Copying MongoDB executable from '#{exe}' into '/usr/bin'"
-          ::FileUtils.cp exe, exe_dest
-
-          new_installed_signature = ::File.exists?(exe_dest) ? `sha256sum #{exe_dest} | cut -d ' ' -f 1`.strip : ''
-
-          raise "Failed to copy MongoDB executable '#{exe_name}'" unless ::File.exists?(exe_dest) && downloaded_signature == new_installed_signature
-        else
-          Chef::Log.info "Checksums match, nothing to do"
-        end
-    end
-  end
-
-  action :create
+  has_binaries mongo_binaries.map{|b| "bin/#{b}"}
+  action :install
 end

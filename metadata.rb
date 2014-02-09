@@ -7,6 +7,7 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "1.1.2"
 supports 'ubuntu', ">= 12.04"
 
+depends "ark", ">= 0.4.2"
 depends "sysctl", ">= 0.3.2"
 
 recipe "hipsnip-mongodb", "Downloads and unpacks the required version of MongoDB - does not set up an instance"
