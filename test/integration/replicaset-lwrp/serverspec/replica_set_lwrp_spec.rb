@@ -26,6 +26,10 @@ describe service('mongod-one') do
   it { should be_running }
 end
 
+describe command('mongo --host 127.0.0.1 --port 27017 --eval "printjson(db.serverStatus())"') do
+  it { should return_stdout /"ok"\s*\:\s*1/ }
+end
+
 # @NOTE: Node two should not be part of replica set at this point (though it is still running)
 
 ################################################################################
@@ -50,6 +54,10 @@ describe service('mongod-three') do
   it { should be_running }
 end
 
+describe command('mongo --host 127.0.0.1 --port 27019 --eval "printjson(db.serverStatus())"') do
+  it { should return_stdout /"ok"\s*\:\s*1/ }
+end
+
 
 ################################################################################
 # Node four
@@ -71,6 +79,10 @@ end
 describe service('mongod-four') do
   it { should be_enabled }
   it { should be_running }
+end
+
+describe command('mongo --host 127.0.0.1 --port 27020 --eval "printjson(db.serverStatus())"') do
+  it { should return_stdout /"ok"\s*\:\s*1/ }
 end
 
 

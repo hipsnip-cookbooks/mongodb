@@ -23,6 +23,10 @@ describe service('mongod') do
   it { should be_running }
 end
 
+describe command('mongo --host 127.0.0.1 --port 27017 --eval "printjson(db.serverStatus())"') do
+  it { should return_stdout /"ok"\s*\:\s*1/ }
+end
+
 # @TODO - work out how to load gems in test environment
 #
 # describe "mongo server" do
