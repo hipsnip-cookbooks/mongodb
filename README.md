@@ -71,8 +71,12 @@ which are deployed on that node.
     default['mongodb']['log_verbose'] # Whether to enable verbose logging (defaults to False)
     default['mongodb']['log_quiet'] # Reduce logging output (defaults to True)
 
+    # Authentication-related setting below only apply if "auth_enabled" is set to True
     default['mongodb']['auth_enabled'] # Whether authentication is enabled (defaults to False)
-    default['mongodb']['auth_keyfile'] # Authentication key file for replica sets (defaults to '')
+    default['mongodb']['auth_keyfile'] # Key file for replica set authentication - leave as default to have it generated
+    default['mongodb']['auth_keyfile_data'] # The payload for the key file above - MAKE SURE YOU CHANGE THIS! (if you use auth)
+    default['mongodb']['admin_user']['name'] # The username of the default admin user (defaults to "admin")
+    default['mongodb']['admin_user']['password'] # The password for the default admin user (default to "l1zKohO94Vf8") - again, CHANGE THIS!
 
     default['mongodb']['http_enabled'] # Whether to enable the HTTP interface (defaults to False)
     default['mongodb']['rest_enabled'] # Whether to enable the rest interface (defaults to False)
@@ -254,6 +258,43 @@ To set up a replica set with a couple of nodes:
                 'host' => '127.0.0.1:27018'
             }
         ]
+    end
+
+
+
+## hipsnip_mongodb_user
+
+Used to create a new user for a given database, to be used when authentication
+support is enabled on the server (off by default). This resource provider is used
+internally to create a default "admin" user when auth support is enabled, but can
+also be used from other cookbooks to create users for your applications to connect.
+
+If the details for a given user change, sub-sequent runs of Chef Client will update
+both the list of roles, and the assigned password accordingly.
+
+
+### Actions
+
+* create (default)
+
+### Attributes
+
+* username (name attribute)
+* password (required)
+* roles (required): The list of roles to apply - refer to MongoDB documentation [here](http://docs.mongodb.org/manual/reference/user-privileges)
+* database (defaults to "admin")
+* node_ip (default to "127.0.0.1")
+* port (defaults to 27017)
+
+
+### Examples
+
+This is pretty much the command we run internally to create the default admin user:
+
+    hipsnip_mongodb_user "admin" do
+      password "supersecretpassword"
+      roles [ "readWriteAnyDatabase", "userAdminAnyDatabase", "dbAdminAnyDatabase", "clusterAdmin" ]
+      database "admin"
     end
 
 
