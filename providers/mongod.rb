@@ -80,7 +80,9 @@ action :create do
     action [:enable, :start]
   end
 
-  hipsnip_mongodb_check_node "127.0.0.1" do
+  check_ip = (new_resource.bind_ip.empty?) ? "127.0.0.1" : new_resource.bind_ip
+
+  hipsnip_mongodb_check_node check_ip do
     port new_resource.port
   end
 
