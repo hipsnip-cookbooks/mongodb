@@ -14,8 +14,8 @@ syslog = true
 logpath = <%= node['mongodb']['log_dir'] %>/<%= @instance_name %>
 logappend = <%= node['mongodb']['log_append'] %>
 <% end %>
-cpu = <%= node['mongodb']['log_cpu'] %>
-verbose = <%= node['mongodb']['log_verbose'] %>
+<% if node['mongodb']['log_cpu'] %>cpu = <%= node['mongodb']['log_cpu'] %><% end %>
+<% if node['mongodb']['log_verbose'] %>verbose = <%= node['mongodb']['log_verbose'] %><% end %>
 quiet = <%= node['mongodb']['log_quiet'] %>
 
 # Journal
