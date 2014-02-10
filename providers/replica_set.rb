@@ -18,6 +18,8 @@
 #
 
 action :create do
+  admin_user = node['mongodb']['admin_user']['name']
+  admin_pass = node['mongodb']['admin_user']['password']
   members = new_resource.members
   seed_list = members.collect{|n| n['host']}
   replica_set_name = new_resource.replica_set
@@ -51,7 +53,7 @@ action :create do
   replica_set_initiated = false
 
   if members.length == 1
-    connection = ::Mongo::MongoClient.new(*members[0]['host'].split(':'), :read => :primary_preferred)
+    connection = create_single_node_connection(*members[0]['host'].split(':'), admin_user, admin_pass)
 
     begin
       connection['admin'].command({'replSetGetStatus' => 1})
@@ -64,7 +66,7 @@ action :create do
     end
   else
     begin
-      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :read => :primary_preferred, :connect_timeout => 10)
+      connection = create_replica_set_connection(seed_list, replica_set_name, admin_user, admin_pass)
       connection['admin'].command({'replSetGetStatus' => 1})
       replica_set_initiated = true
     rescue ::Mongo::ConnectionFailure => ex
@@ -75,7 +77,7 @@ action :create do
 
       # Replace connection with a single-member one
       # We'll use this in the next section to initiate the replica set
-      connection = ::Mongo::MongoClient.new(*members[0]['host'].split(':'))
+      connection = create_single_node_connection(*members[0]['host'].split(':'), admin_user, admin_pass)
     end
   end
 
@@ -101,8 +103,10 @@ action :create do
     # Check replica set health
     retries = 0
     begin
-      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :read => :primary_preferred)
-      connection['admin'].command({'replSetGetStatus' => 1})
+      connection = create_replica_set_connection(seed_list, replica_set_name, admin_user, admin_pass)
+      res = connection['admin'].command({'replSetGetStatus' => 1})
+      # Chef::Log.info res
+      Chef::Log.info "Replica set is up and running!"
     rescue ::Mongo::ConnectionFailure
       raise if retries >= node['mongodb']['node_check']['retries']
       Chef::Log.warn "Failed to get replica set status - might be initializing still"
@@ -136,7 +140,7 @@ action :create do
       rescue
       end
 
-      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+      connection = create_replica_set_connection(seed_list, replica_set_name, admin_user, admin_pass)
     end
 
 
@@ -160,7 +164,7 @@ action :create do
       Chef::Log.info "Waiting #{sleep_time} seconds and retrying..."
       sleep(sleep_time)
 
-      connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+      connection = create_replica_set_connection(seed_list, replica_set_name, admin_user, admin_pass)
       retry
     end
 
@@ -183,7 +187,7 @@ action :create do
         connection['admin'].command({'replSetReconfig' => new_config})
       rescue ::Mongo::ConnectionFailure => ex # Reconfiguring closes all connections - this is normal
         Chef::Log.info "Connection closed, reconnecting..."
-        connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+        connection = create_replica_set_connection(seed_list, replica_set_name, admin_user, admin_pass)
       end
 
       Chef::Log.info "Verifying new replica set configuration..."
@@ -205,7 +209,7 @@ action :create do
         Chef::Log.info "Waiting #{sleep_time} seconds and retrying..."
         sleep(sleep_time)
 
-        connection = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+        connection = create_replica_set_connection(seed_list, replica_set_name, admin_user, admin_pass)
         retry
       end
 
@@ -218,6 +222,25 @@ action :create do
       new_resource.updated_by_last_action(true)
     else
       Chef::Log.info "Replica set configuration identical - nothing to do"
+    end
+  end
+
+  ################################################################################
+  # Make sure Admin DB User is created
+
+  # This part only applies on first run, where the User setup section in the
+  # mongod provider will not be able to run, as the replica set hasn't yet
+  # been initialised
+
+  if node['mongodb']['auth_enabled']
+    hipsnip_mongodb_user node['mongodb']['admin_user']['name'] do
+      password node['mongodb']['admin_user']['password']
+      roles node['mongodb']['admin_user']['roles']
+      database "admin"
+      # Just pick a node, any node...
+      n = seed_list[0].split(':')
+      node_ip n[0]
+      port n[1].to_i
     end
   end
 end
@@ -241,4 +264,32 @@ def generate_member_config(node)
   member_config['tags'] = node['tags'] unless node['tags'].nil? || node['tags'].empty?
 
   member_config
+end
+
+def create_replica_set_connection(seed_list, replica_set_name, admin_user, admin_pass)
+  conn = ::Mongo::MongoReplicaSetClient.new(seed_list, :name => replica_set_name, :connect_timeout => 10, :read => :primary_preferred)
+
+  # Authenticate Admin DB
+  db = conn['admin']
+  begin db.authenticate(admin_user, admin_pass); rescue ::Mongo::AuthenticationError; end
+
+  # Authenticate local DB
+  db = conn['local']
+  begin db.authenticate(admin_user, admin_pass); rescue ::Mongo::AuthenticationError; end
+
+  conn
+end
+
+def create_single_node_connection(ip, port, admin_user, admin_pass)
+  conn = ::Mongo::MongoClient.new(ip, port, :read => :primary_preferred)
+
+  # Authenticate Admin DB
+  db = conn['admin']
+  begin db.authenticate(admin_user, admin_pass); rescue ::Mongo::AuthenticationError; end
+
+  # Authenticate local DB
+  db = conn['local']
+  begin db.authenticate(admin_user, admin_pass); rescue ::Mongo::AuthenticationError; end
+
+  conn
 end

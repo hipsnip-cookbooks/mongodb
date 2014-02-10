@@ -58,6 +58,7 @@ hipsnip_mongodb_replica_set "play" do
   ]
 end
 
+
 # Add a new node
 
 hipsnip_mongodb_mongod "four" do
@@ -88,6 +89,7 @@ hipsnip_mongodb_replica_set "play" do
     }
   ]
 end
+
 
 # Remove a node
 
