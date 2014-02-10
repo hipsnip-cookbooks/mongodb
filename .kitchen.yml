@@ -17,9 +17,15 @@ suites:
 - name: mongod-recipe
   run_list:
     - recipe[hipsnip-mongodb_test::mongod_recipe]
+- name: mongod-recipe-auth
+  run_list:
+    - recipe[hipsnip-mongodb_test::mongod_recipe_auth]
 - name: mongod-lwrp
   run_list:
     - recipe[hipsnip-mongodb_test::mongod_lwrp]
 - name: replicaset-lwrp
   run_list:
     - recipe[hipsnip-mongodb_test::replica_set_lwrp]
+- name: replicaset-lwrp-auth
+  run_list:
+    - recipe[hipsnip-mongodb_test::replica_set_lwrp_auth]
