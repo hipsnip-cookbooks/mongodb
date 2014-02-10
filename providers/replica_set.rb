@@ -232,16 +232,16 @@ action :create do
   # mongod provider will not be able to run, as the replica set hasn't yet
   # been initialised
 
-  if node['mongodb']['auth_enabled']
-    hipsnip_mongodb_user node['mongodb']['admin_user']['name'] do
-      password node['mongodb']['admin_user']['password']
-      roles node['mongodb']['admin_user']['roles']
-      database "admin"
-      # Just pick a node, any node...
-      n = seed_list[0].split(':')
-      node_ip n[0]
-      port n[1].to_i
-    end
+  hipsnip_mongodb_user node['mongodb']['admin_user']['name'] do
+    password node['mongodb']['admin_user']['password']
+    roles node['mongodb']['admin_user']['roles']
+    database "admin"
+    # Just pick a node, any node...
+    n = seed_list[0].split(':')
+    node_ip n[0]
+    port n[1].to_i
+
+    only_if { node['mongodb']['auth_enabled'] }
   end
 end
 

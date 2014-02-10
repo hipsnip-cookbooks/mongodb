@@ -93,14 +93,13 @@ action :create do
   end
 
   # Set up Admin user
-  if node['mongodb']['auth_enabled']
-    hipsnip_mongodb_user node['mongodb']['admin_user']['name'] do
-      password node['mongodb']['admin_user']['password']
-      roles node['mongodb']['admin_user']['roles']
-      database "admin"
-      node_ip new_resource.bind_ip unless new_resource.bind_ip.empty?
-      port new_resource.port
-    end
+  hipsnip_mongodb_user node['mongodb']['admin_user']['name'] do
+    password node['mongodb']['admin_user']['password']
+    roles node['mongodb']['admin_user']['roles']
+    database "admin"
+    node_ip new_resource.bind_ip unless new_resource.bind_ip.empty?
+    port new_resource.port
+    only_if { node['mongodb']['auth_enabled'] }
   end
 
   new_resource.updated_by_last_action(true)

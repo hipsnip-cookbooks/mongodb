@@ -55,19 +55,17 @@ directory '/etc/mongodb' do
   group 'root'
 end
 
-if node['mongodb']['auth_enabled']
-  if node['mongodb']['auth_keyfile'] == '/etc/mongodb/keyfile'
-    raise '"auth_keyfile_data" can not be blank if authentication is enabled and no keyFile is specified' if node['mongodb']['auth_keyfile_data'].empty?
+if node['mongodb']['auth_enabled'] && node['mongodb']['auth_keyfile'] == '/etc/mongodb/keyfile'
+  raise '"auth_keyfile_data" can not be blank if authentication is enabled and no keyFile is specified' if node['mongodb']['auth_keyfile_data'].empty?
 
-    # @NOTE: Changing the keyfile after there is an instance running
-    #        means it will have to be restarted manually, otherwise
-    #        the change will not take effect!
-    file "/etc/mongodb/keyfile" do
-      content node['mongodb']['auth_keyfile_data']
-      mode '600'
-      owner node['mongodb']['user']
-      group node['mongodb']['group']
-    end
+  # @NOTE: Changing the keyfile after there is an instance running
+  #        means it will have to be restarted manually, otherwise
+  #        the change will not take effect!
+  file "/etc/mongodb/keyfile" do
+    content node['mongodb']['auth_keyfile_data']
+    mode '600'
+    owner node['mongodb']['user']
+    group node['mongodb']['group']
   end
 end
 
