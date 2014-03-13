@@ -60,25 +60,56 @@ action :create do
   link ::File.join(node['mongodb']['data_dir'], instance_name, 'journal') do
     to ::File.join(node['mongodb']['journal_dir'], instance_name)
   end
+##############################################################
+##############################################################
 
-  # Upstart script
-  template "/etc/init/#{instance_name}.conf" do
-    source "mongod.upstart.erb"
-    mode '644'
-    cookbook 'hipsnip-mongodb'
-    variables(
-      "config_file" => config_file,
-      "instance_name" => instance_name
-    )
+  case node["platform"]
+  when "ubuntu"
+    # Upstart script
+    template "/etc/init/#{instance_name}.conf" do
+      source "mongod.upstart.erb"
+      mode '644'
+      cookbook 'hipsnip-mongodb'
+      variables(
+        "config_file" => config_file,
+        "instance_name" => instance_name
+      )   
+  
+      notifies :restart, "service[#{instance_name}]"
+    end 
+  
+  
+    service instance_name do
+      provider Chef::Provider::Service::Upstart
+      action [:enable, :start]
+    end 
+  
+  when "debian"
+    # Init script
+    template "/etc/init.d/#{instance_name}" do
+      source "mongod.init.erb"
+      mode '755'
+      cookbook 'hipsnip-mongodb'
+      variables(
+        "config_file" => config_file,
+        "instance_name" => instance_name
+      )   
+  
+      notifies :restart, "service[#{instance_name}]"
+    end 
+  
+  
+    service instance_name do
+      provider Chef::Provider::Service::Init::Debian
+      action [:enable, :start]
+    end 
 
-    notifies :restart, "service[#{instance_name}]"
-  end
+  end 
 
 
-  service instance_name do
-    provider Chef::Provider::Service::Upstart
-    action [:enable, :start]
-  end
+
+##############################################################
+##############################################################
 
   check_ip = (new_resource.bind_ip.empty?) ? "127.0.0.1" : new_resource.bind_ip
 

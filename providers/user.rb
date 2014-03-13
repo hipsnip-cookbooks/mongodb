@@ -45,7 +45,7 @@ action :create do
     connection = ::Mongo::MongoClient.new(node_ip, port, :slave_ok => true)
   end
 
-  db = connection[database]
+  db = connection['admin']
 
   begin
     db.authenticate(admin_user, admin_pass)
@@ -56,6 +56,8 @@ action :create do
     # is a failure, the serverStatus command below will catch it.
     Chef::Log.warn("Authentication as admin to MongoDB node at #{node_ip}:#{port} failed")
   end
+
+  db = connection[database]
 
   begin
     # It appears that the Ruby driver does all the work for us here:
