@@ -51,7 +51,7 @@ ulimit -n <%= node['mongodb']['open_file_limit'] %> <%= node['mongodb']['open_fi
 
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/bin/mongod
+DAEMON=/usr/local/bin/mongod
 DESC=database
 
 NAME=<%= @instance_name %>
