@@ -12,6 +12,9 @@ platforms:
 - name: ubuntu-12.04
   run_list:
   - recipe[apt]
+- name: debian-7.4
+  run_list:
+  - recipe[apt]
 
 suites:
 - name: mongod-recipe
