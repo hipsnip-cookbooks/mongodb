@@ -11,10 +11,6 @@ describe file("/etc/mongodb/mongod.conf") do
   it { should contain "auth = true" }
 end
 
-describe file("/etc/init/mongod.conf") do
-  it { should be_file }
-end
-
 describe port(27017) do
   it { should be_listening }
 end

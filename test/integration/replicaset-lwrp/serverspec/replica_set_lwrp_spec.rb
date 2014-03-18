@@ -13,10 +13,6 @@ describe file("/etc/mongodb/mongod-one.conf") do
   it { should contain "dbpath = /var/lib/mongo_data/mongod-one" }
 end
 
-describe file("/etc/init/mongod-one.conf") do
-  it { should be_file }
-end
-
 describe port(27017) do
   it { should be_listening }
 end
@@ -41,10 +37,6 @@ describe file("/etc/mongodb/mongod-three.conf") do
   it { should contain "dbpath = /var/lib/mongo_data/mongod-three" }
 end
 
-describe file("/etc/init/mongod-three.conf") do
-  it { should be_file }
-end
-
 describe port(27019) do
   it { should be_listening }
 end
@@ -66,10 +58,6 @@ describe file("/etc/mongodb/mongod-four.conf") do
   it { should be_file }
   it { should contain "port = 27020" }
   it { should contain "dbpath = /var/lib/mongo_data/mongod-four" }
-end
-
-describe file("/etc/init/mongod-four.conf") do
-  it { should be_file }
 end
 
 describe port(27020) do

@@ -10,10 +10,6 @@ describe file("/etc/mongodb/mongod-primary.conf") do
   it { should contain "dbpath = /var/lib/mongo_data/mongod-primary" }
 end
 
-describe file("/etc/init/mongod-primary.conf") do
-  it { should be_file }
-end
-
 describe port(27018) do
   it { should be_listening }
 end
