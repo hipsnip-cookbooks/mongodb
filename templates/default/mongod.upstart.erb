@@ -14,7 +14,7 @@ respawn
 limit nofile <%= node['mongodb']['open_file_limit'] %> <%= node['mongodb']['open_file_limit'] %>
 
 # Start the process
-exec start-stop-daemon --start --chuid <%= node['mongodb']['user'] %> --make-pidfile --pidfile /var/run/<%= @instance_name %>.pid --exec /usr/local/bin/mongod -- -f <%= @config_file %>
+exec start-stop-daemon --start --chuid <%= node['mongodb']['user'] %> --make-pidfile --pidfile /var/run/<%= @instance_name %>.pid --exec <% if node['mongodb']['package_name'] %>/usr/<% else %>/usr/local/<% end %>bin/mongod -- -f <%= @config_file %>
 
 # Clean up after stopping the process
 post-stop script

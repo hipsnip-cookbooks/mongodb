@@ -11,7 +11,7 @@ dbpath = <%= @db_path %>
 <% if node['mongodb']['syslog'] == true %>
 syslog = true
 <% else %>
-logpath = <%= node['mongodb']['log_dir'] %>/<%= @instance_name %>
+logpath = <%= node['mongodb']['log_dir'] %>/<%= @instance_name %>/<%= @instance_name %>.log
 logappend = <%= node['mongodb']['log_append'] %>
 <% end %>
 <% if node['mongodb']['log_cpu'] %>cpu = <%= node['mongodb']['log_cpu'] %><% end %>

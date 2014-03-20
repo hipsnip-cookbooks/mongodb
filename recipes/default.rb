@@ -38,15 +38,18 @@ end
 ################################################################################
 # Set up Mongo user, group and folders
 
-group node['mongodb']['group'] do
-  gid node['mongodb']['group_id']
-  action :create
-end
+# User and group are already created when installing from a package.
+if node['mongodb']['package_name'] == nil
+  group node['mongodb']['group'] do
+    gid node['mongodb']['group_id']
+    action :create
+  end
 
-user node['mongodb']['user'] do
-  gid   node['mongodb']['group_id']
-  shell '/bin/false' # no login
-  # no home dir
+  user node['mongodb']['user'] do
+    gid   node['mongodb']['group_id']
+    shell '/bin/false' # no login
+    # no home dir
+  end
 end
 
 directory '/etc/mongodb' do
@@ -69,31 +72,37 @@ if node['mongodb']['auth_enabled'] && node['mongodb']['auth_keyfile'] == '/etc/m
   end
 end
 
-
 ################################################################################
 # Download MongoDB release - NOTE: This won't configure and start an instance
 
-mongo_binaries = [
-  'bsondump',
-  'mongo',
-  'mongod',
-  'mongodump',
-  'mongoexport',
-  'mongofiles',
-  'mongoimport',
-  'mongooplog',
-  'mongoperf',
-  'mongorestore',
-  'mongos',
-  'mongosniff',
-  'mongostat',
-  'mongotop'
-]
+if node['mongodb']['package_name']
+  package node[:mongodb][:package_name] do
+    action :install
+    version node[:mongodb][:package_version]
+  end
+else
+  mongo_binaries = [
+    'bsondump',
+    'mongo',
+    'mongod',
+    'mongodump',
+    'mongoexport',
+    'mongofiles',
+    'mongoimport',
+    'mongooplog',
+    'mongoperf',
+    'mongorestore',
+    'mongos',
+    'mongosniff',
+    'mongostat',
+    'mongotop'
+  ]
 
-ark "mongodb" do
-  url node['mongodb']['download']['src']
-  version node['mongodb']['download']['version']
-  checksum node['mongodb']['download']['checksum']
-  has_binaries mongo_binaries.map{|b| "bin/#{b}"}
-  action :install
+  ark "mongodb" do
+    url node['mongodb']['download']['src']
+    version node['mongodb']['download']['version']
+    checksum node['mongodb']['download']['checksum']
+    has_binaries mongo_binaries.map{|b| "bin/#{b}"}
+    action :install
+  end
 end
