@@ -14,6 +14,9 @@
     },
     "sysctl": {
       "locked_version": "0.3.3"
+    },
+    "build-essential": {
+      "locked_version": "2.0.0"
     }
   }
 }

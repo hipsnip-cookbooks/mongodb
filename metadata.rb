@@ -10,6 +10,7 @@ supports "debian", ">= 7.0"
 
 depends "ark", ">= 0.4.2"
 depends "sysctl", ">= 0.3.2"
+depends "build-essential", ">= 2.0.0"
 
 recipe "hipsnip-mongodb", "Downloads and unpacks the required version of MongoDB - does not set up an instance"
 recipe "hipsnip-mongodb::mongo_gem", "Installs the required version of the mongo and bson_ext gems"
