@@ -4,6 +4,7 @@
 .ruby-version
 .travis.yml
 .kitchen.yml
+.kitchen.local.yml
 Gemfile
 Gemfile.lock
 Berksfile

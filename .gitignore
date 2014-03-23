@@ -2,6 +2,7 @@
 .chef/checksums
 .vagrant
 .kitchen
+.kitchen.local.yml
 bin
 cookbook_test
 metadata.json
