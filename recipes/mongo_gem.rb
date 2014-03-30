@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-node.set['build-essential']['compile_time'] = true
 include_recipe 'build-essential::default'
 
 gem_package "mongo" do
