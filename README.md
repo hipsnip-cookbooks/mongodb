@@ -11,8 +11,10 @@ point it at your own custom build of MongoDB (say with SSL included).
 
 Compatibility
 =============
-Integration tested on 64bit Ubuntu `12.04` with Chef `11.10`, but assumed to work with other Debian-based
-distros as well.
+Integration tested with Chef `11.10` on:
+
+* Ubuntu 12.04
+* Debian 7.4
 
 > NOTE: Running MongoDB on 32bit nodes is generally a bad idea, so we'll raise an exception
 if someone tries to do it here.
@@ -39,7 +41,7 @@ manual [here](http://docs.mongodb.org/manual/reference/configuration-options/).
 
 ### Download settings
 
-    default['mongodb']['download']['version'] # The version to download (currently 2.4.9)
+    default['mongodb']['download']['version'] # The version to download (currently 2.4.10)
     default['mongodb']['download']['checksum'] # SHA256 checksum of the version archive
 
     # don't change these, unless you're running your own download server
@@ -93,8 +95,8 @@ which are deployed on that node.
 
 ### Gem settings
 
-    default['mongodb']['gem_version']['mongo'] # The version of the mongo gem to install (defaults to '1.9.2')
-    default['mongodb']['gem_version']['bson_ext'] # The version of the bson_ext gem to install (defaults to '1.9.2')
+    default['mongodb']['gem_version']['mongo'] # The version of the mongo gem to install (defaults to '1.10.0')
+    default['mongodb']['gem_version']['bson_ext'] # The version of the bson_ext gem to install (defaults to '1.10.0')
 
 
 ### Misc.
