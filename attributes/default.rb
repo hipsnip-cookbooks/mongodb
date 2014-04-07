@@ -26,6 +26,13 @@ default['mongodb']['download']['checksum'] = 'fd5c88a45e5ebffb44a932be5b96910930
 default['mongodb']['download']['host'] = 'fastdl.mongodb.org'
 default['mongodb']['download']['subfolder'] = 'linux/'
 
+# override both 'distro' and 'package_name' to install from a package
+# instead of the above tarballs. example:
+#   distro = 'mongo'
+#   package_name = 'mongodb-10gen'
+default[:mongodb][:distro] = nil
+default[:mongodb][:package_name] = nil
+default[:mongodb][:package_version] = nil
 
 ################################################################################
 # Generic configuration (will be the same for all instances on this node)
@@ -35,7 +42,7 @@ default['mongodb']['group_id'] = 3500
 default['mongodb']['group'] = 'mongodb'
 
 # Paths
-default['mongodb']['log_dir'] = '/var/log/mongo'
+default['mongodb']['log_dir'] = '/var/log'
 # we'll create a new folder in these paths for each instance
 default['mongodb']['data_dir'] = '/var/lib/mongo_data'
 default['mongodb']['journal_dir'] = '/var/lib/mongo_journal'

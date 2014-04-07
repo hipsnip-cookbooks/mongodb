@@ -18,13 +18,16 @@
 #
 
 action :create do
-  instance_name = if new_resource.name == "default" then "mongod"
+  instance_name = if node[:mongodb][:distro] == "tokumx" then "tokumx"
+                  elsif new_resource.name == "default" then "mongod"
                   else "mongod-#{new_resource.name}"
                   end
 
   Chef::Log.info "Configuring MongoDB instance '#{instance_name}'..."
 
-  config_file = "/etc/mongodb/#{instance_name}.conf"
+  config_file = if node[:mongodb][:distro] == "tokumx" then "/etc/tokumx.conf"
+                else "/etc/mongodb/#{instance_name}.conf"
+                end
 
   template config_file do
     source "mongod.conf.erb"
@@ -51,6 +54,14 @@ action :create do
 
   # Journal dir
   directory ::File.join(node['mongodb']['journal_dir'], instance_name) do
+    owner node['mongodb']['user']
+    group node['mongodb']['group']
+    mode  '755'
+    recursive true
+  end
+
+  # Log dir
+  directory ::File.join(node['mongodb']['log_dir'], instance_name) do
     owner node['mongodb']['user']
     group node['mongodb']['group']
     mode  '755'
