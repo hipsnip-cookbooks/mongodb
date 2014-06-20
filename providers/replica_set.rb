@@ -60,7 +60,7 @@ action :create do
       replica_set_initiated = true
     rescue ::Mongo::OperationFailure => ex
       # unless it's telling us to initiate the replica set
-      unless ex.message.include? 'run rs.initiate'
+      unless ex.message.include?('run rs.initiate') || ex.message.include?("can't get local.system.replset config from self or any seed")
         raise # re-raise the error - we want to know about it
       end
     end
