@@ -133,5 +133,9 @@ action :create do
     only_if { node['mongodb']['auth_enabled'] }
   end
 
+  hipsnip_mongodb_admin_user "127.0.0.1" do
+    port new_resource.port
+  end
+
   new_resource.updated_by_last_action(true)
 end

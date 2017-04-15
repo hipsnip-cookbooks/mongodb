@@ -34,6 +34,11 @@ default['mongodb']['user'] = 'mongodb'
 default['mongodb']['group_id'] = 3500
 default['mongodb']['group'] = 'mongodb'
 
+# Admin User
+
+default['mongodb']['admin'] = 'admin'
+default['mongodb']['password'] = 'password'
+
 # Paths
 default['mongodb']['log_dir'] = '/var/log/mongo'
 # we'll create a new folder in these paths for each instance
